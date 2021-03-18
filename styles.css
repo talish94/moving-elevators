@@ -1,0 +1,50 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Tahoma', sans-serif;
+    scroll-behavior: smooth;
+  }
+
+
+img.building {
+    /*display: block;
+     margin-left: auto;
+    margin-right: auto */
+    width: 70%;
+    height: 130%;
+    position: relative;
+    /* top: 0; */
+    left: 17%;
+  }
+
+  img.elevator {
+    position: absolute;
+    top: 102%;
+   /* left: 42.4%; */
+    width: 5.35%;
+    height: 20%;
+    transition: 4s ease-in-out;
+    z-index: 1;
+    /* margin-left: auto;
+    margin-right: auto */
+  }
+
+  img.btnImg {
+    position: absolute;
+    /* top: 79%;*/
+    left: 51.1%; 
+    width: 2%;
+    height: 4%;
+  }
+
+  img.btnImgRED {
+    position: absolute;
+    /* top: 79%;*/
+    left: 51.1%; 
+    width: 2%;
+    height: 4%;
+    visibility : hidden;
+    z-index: 1;
+  }
+  
