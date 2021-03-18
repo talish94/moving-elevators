@@ -1,7 +1,7 @@
 
 
 
-var audio = new Audio('ElevatorBell.mp3');
+var audio = new Audio('/assets/ElevatorBell.mp3');
 
 function startMusic() {
     audio.play();
