@@ -20,7 +20,7 @@ img.building {
 
   img.elevator {
     position: absolute;
-    top: 102%;
+    /* top: 102%; */
    /* left: 42.4%; */
     width: 5.35%;
     height: 20%;
