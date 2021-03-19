@@ -24,8 +24,9 @@ img.building {
    /* left: 42.4%; */
     width: 5.35%;
     height: 20%;
-    transition: 4s ease-in-out;
-    z-index: 1;
+    transition: 4000 ease-in-out;
+    /* animation: linear 10s; */
+    z-index: 2;
     /* margin-left: auto;
     margin-right: auto */
   }
@@ -48,3 +49,18 @@ img.building {
     z-index: 1;
   }
   
+  /* Bottom right text */
+.text-block {
+  position: absolute;
+  font-size: 11px;
+  left: 50.7%;
+  background-color: rgba(0, 0, 0, 0.363);
+  color: white;
+  padding-left: 4px;
+  padding-right: 4px;
+  z-index: 2;
+}
+
+/* #timerFloor0{
+  top: 100%;
+} */
