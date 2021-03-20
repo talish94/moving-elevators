@@ -53,14 +53,18 @@ img.building {
 .text-block {
   position: absolute;
   font-size: 11px;
-  left: 50.7%;
+  left: 51.3%;
   background-color: rgba(0, 0, 0, 0.363);
   color: white;
-  padding-left: 4px;
-  padding-right: 4px;
+  padding-left: 3px;
+  padding-right: 3px;
   z-index: 2;
+  display: none;
 }
 
-/* #timerFloor0{
-  top: 100%;
+/* .text-block #timerFloor0{
+  position: absolute;
+  top: 153%;
+  z-index: 4;
+
 } */

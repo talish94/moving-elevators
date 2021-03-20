@@ -1,103 +1,76 @@
 
 
-var audio = new Audio('/assets/ElevatorBell.mp3');
-var rightElevatorFloor = 2;
-var leftElevatorFloor = 3;
+let audio = new Audio('/assets/ElevatorBell.mp3');
+let rightElevatorFloor = 2;
+let leftElevatorFloor = 3;
 
-var rightElevatorIdle = false;
-var leftElevatorIdle = false;
+let rightElevatorIdle = false;
+let leftElevatorIdle = false;
 
-var leftDistance = 1000;
-var rightDistance = 1000;
+let leftDistance = 1000;
+let rightDistance = 1000;
 
-var queueRight = [];
-var queueLeft = [];
+let queueRight = [];
+let queueLeft = [];
 
-var timePerFloor = 4;
-var delayAfterArrival = 2000;
+let timePerFloor = 4;
+let delayAfterArrival = 2000;
 
-var firstInitial = true;
+let firstInitial = true;
 
-var elevatorLeftIsBusy = false;
-var elevatorRightIsBusy = false;
+let elevatorLeftIsBusy = false;
+let elevatorRightIsBusy = false;
 
-var timerFloor0 = 0;
-var timerFloor1 = 0;
-var timerFloor2 = 0;
-var timerFloor3 = 0;
-var timerFloor4 = 0;
-var timerFloor5 = 0;
-var timerFloor6 = 0;
+let totalTimeQueueRight = 0;
+let totalTimeQueueLeft = 0;
 
 
-function setAllButtons() {
+let rightInterval;
+let leftInterval;
+
+let intervalTimerFloor0;
+let intervalTimerFloor1;
+let intervalTimerFloor2;
+let intervalTimerFloor3;
+let intervalTimerFloor4;
+let intervalTimerFloor5;
+let intervalTimerFloor6;
+
+
+let timerFloor0 = false;
+let timerFloor1 = false;
+let timerFloor2 = false;
+let timerFloor3 = false;
+let timerFloor4 = false;
+let timerFloor5 = false;
+let timerFloor6 = false;
+
+
+
+
+let time_elapsed;
+
+ function setAllButtons() {
 
     console.log(firstInitial);
+     
+    for (numButtons = 0; numButtons < 7; numButtons++ ){
 
-    const btn0 = document.getElementById("btnFloor0");
-    btn0.addEventListener("click", function() {
-        onBTNpress(0);
-    });
+        let currBTN = "btnFloor" + numButtons;  // "btnFloor0"
+        console.log(currBTN);
+        let elementBTN = document.getElementById(currBTN);
 
-    const btn1 = document.getElementById("btnFloor1");
-    btn1.addEventListener("click", function() {
-        onBTNpress(1);
-    });
- 
+        elementBTN.addEventListener("click", onBTNpress.bind(this, numButtons), false);
 
-
-    const btn2 = document.getElementById("btnFloor2");
-    btn2.addEventListener("click", function() {
-        onBTNpress(2);
-    });
-
-    const btn3 = document.getElementById("btnFloor3");
-    btn3.addEventListener("click", function() {
-        onBTNpress(3);
-    });
-
-    const btn4 = document.getElementById("btnFloor4");
-    btn4.addEventListener("click", function() {
-        onBTNpress(4);
-    });
-
-    const btn5 = document.getElementById("btnFloor5");
-    btn5.addEventListener("click", function() {
-        onBTNpress(5);
-    });
-
-    const btn6 = document.getElementById("btnFloor6");
-    btn6.addEventListener("click", function() {
-        onBTNpress(6);
-    });
+        console.log(numButtons);
+    }
 
     firstInitial = false;
     console.log(firstInitial);
-    
+
 }
-   
-    // for (numButtons = 0; numButtons < 7; numButtons++ ){
-
-    //     var currBTN = "btnFloor" + numButtons;  // "btnFloor0"
-    //     console.log(currBTN);
-    //     var elementBTN = document.getElementById(currBTN);
-
-    //     elementBTN.addEventListener("click", function() {
-    //         onBTNpress(numButtons);
-    //     });
-
-    //     console.log(numButtons);
-    // }
 
 
-
-
-
-
-// setInterval(function() {
-//     initialState();
-//     console.log("Im herreee");
-//     }, 1000); 
 
 initialState();
 
@@ -107,20 +80,20 @@ function initialState(){
         setAllButtons();
 
     if (queueRight.length !== 0 && !elevatorRightIsBusy){
-        moveElevator("elevatorRight", rightElevatorFloor, queueRight[queueRight.length-1]);  // num of next floor to go to.
-        //console.log("enter roght");
+        moveElevator("elevatorRight", rightElevatorFloor, queueRight[0]);  // num of next floor to go to.
     }
 
     if (queueLeft.length !== 0 && !elevatorLeftIsBusy) {
-        moveElevator("elevatorLeft", leftElevatorFloor, queueLeft[queueLeft.length-1]);  // num of next floor to go to.
-    }
+        moveElevator("elevatorLeft", leftElevatorFloor, queueLeft[0]);  // num of next floor to go to.
 
+    }
 
     setTimeout(function() {
         initialState();
-        //console.log("Im herreee");
-     }, 200); 
+    }, 100); 
 }
+
+
 
 function moveElevator(whichElevator, fromFloorNum, toFloorNum){
 
@@ -134,18 +107,17 @@ function moveElevator(whichElevator, fromFloorNum, toFloorNum){
         throw 'Invalid elevator!';
 
 
-    var topRate = convertFloorToPlace(toFloorNum);
+    let topRate = convertFloorToPlace(toFloorNum);
     document.getElementById(whichElevator).style.top = topRate;
 
-    var time = (Math.abs(fromFloorNum - toFloorNum)) * timePerFloor;
+    let time = (Math.abs(fromFloorNum - toFloorNum)) * timePerFloor;
     document.getElementById(whichElevator).style.transition = time + "s ease-in-out";
-
-    //console.log(document.getElementById(whichElevator).style.transition);
-    //var totalTimeToArrival = (Math.abs(fromFloorNum, toFloorNum)) * timePerFloor;
 
     setTimeout(function(){ // free to go again.
         completeMove(whichElevator, toFloorNum);
      }, time * 1000); 
+
+     return time;
 }
 
 
@@ -174,21 +146,20 @@ function convertFloorToPlace(floorNum){
 
 function completeMove(whichElevator, toFloorNum){
 
-    startMusic();
-    var setBusy = "";
+    audio.play();
+    let setBusy = "";
 
     const btnFloor = "redBTNFloor" + toFloorNum;
     document.getElementById(btnFloor).style.visibility="hidden";
 
+    setTimer(toFloorNum);
+
+
     if (whichElevator === "elevatorRight" ){
-        rightElevatorFloor = queueRight.shift(); 
-        console.log("shift out " + toFloorNum + " from right array !!");
         setBusy = "right";
     }
     
     else if (whichElevator === "elevatorLeft"){
-        leftElevatorFloor = queueLeft.shift();
-        console.log("shift out " + toFloorNum + " from lefttt array !!");
         setBusy = "left";
     }
 
@@ -198,87 +169,38 @@ function completeMove(whichElevator, toFloorNum){
 
     setTimeout(function(){ 
 
-        if (setBusy === "left"){
+        if (setBusy == "left"){
             elevatorLeftIsBusy = false; 
-            //console.log("enter left %$$$$$$$$$$");
+            leftElevatorFloor = queueLeft.shift();
+
+            if (queueLeft.length === 0 )
+                totalTimeQueueLeft = 0;
         }
         else{
             elevatorRightIsBusy = false; 
-            //console.log("enter rightttt$$");
+            rightElevatorFloor = queueRight.shift(); 
+            
+
+            if (queueRight.length === 0 )
+                totalTimeQueueRight = 0;
         }
 
-        initialState();
     }, delayAfterArrival); 
 }
 
 
-
-function startMusic() {
-    audio.play();
-}
-
-
-
-// function elevatorArrived(whichElevator, floorNum) {
-//     const btnFloor = "redBTNFloor" + floorNum;
-
-//     startMusic();
-//     document.getElementById(btnFloor).style.visibility="hidden";
-
-//     setTimeout(function(){ // free to go again.
-//         setIdle(whichElevator, false);
-//         console.log("now idle is false !!");
-//      }, 2000);
-
-//     if ( whichElevator == "elevatorRight")
-//         rightElevatorFloor = floorNum;
-//     else
-//         leftElevatorFloor = floorNum;
-
-//     console.log(rightElevatorFloor);
-//     console.log(leftElevatorFloor);
-// }
-
-// function getCloserElevator(floorNum) {
-//     leftDistance = Math.abs(leftElevatorFloor - floorNum);
-//     rightDistance = Math.abs(rightElevatorFloor - floorNum);
-
-//     return Math.min(leftDistance, rightDistance) == leftDistance ? "left" : "right";
-// }
-
-// function setIdle(whichElevator, boolean){
-//     if (whichElevator == elevatorLeft)
-//         rightElevatorIdle = boolean;
-//     else    
-//         leftElevatorIdle = boolean;
-// }
-
-
-// function computeSpeed(whichElevator, floorNum){
-//     if (whichElevator == elevatorLeft)
-//         var distance = Math.abs(leftElevatorFloor - floorNum);
-//     else    
-//         var distance =  Math.abs(rightElevatorFloor - floorNum);
-
-//     return distance * 4 ;   /////// timePerFloor
-// }
 
 
 
 function onBTNpress(btnFloorNum){
 
     const redBTNFloor = "redBTNFloor" + btnFloorNum;
-
     document.getElementById(redBTNFloor).style.visibility="visible";
 
-    document.getElementById('timerFloor0').innerText = "4.000";
+    let right = false;
 
-
-    var destRight = rightElevatorFloor;
-    var destLeft = leftElevatorFloor;
-
-    // console.log(destRight);
-    // console.log(destLeft);
+    let destRight = rightElevatorFloor;
+    let destLeft = leftElevatorFloor;
 
     if (queueRight.length !== 0)
         destRight = queueRight[queueRight.length-1];
@@ -286,175 +208,231 @@ function onBTNpress(btnFloorNum){
     if (queueLeft.length !== 0)
         destLeft = queueLeft[queueLeft.length-1];
     
-    // console.log(queueRight.length);
-    // console.log(queueLeft.length );
 
 
     if ((Math.abs(btnFloorNum - destLeft)) > (Math.abs(btnFloorNum - destRight))){
         queueRight.push(btnFloorNum);
-        console.log("push " + btnFloorNum + " into right array !!");
-        console.log(queueRight);
+        right = true;        
     }
         
     else if ((Math.abs(btnFloorNum - destLeft)) < (Math.abs(btnFloorNum - destRight))){
         queueLeft.push(btnFloorNum);
-        console.log("push " + btnFloorNum + " into lefttt array !!");
-        console.log(queueLeft);
     }
 
     else {  // distances are equal. choose the first empty one if any
         if (queueRight.length === 0){
             queueRight.push(btnFloorNum);
-            console.log("push " + btnFloorNum + " into right array !!");
+            right = true;
         }
-        else    {
+        else {
             queueLeft.push(btnFloorNum);
-            console.log("push " + btnFloorNum + " into lefttt array !!");
         }
     }
-   
+
+    setTimer(btnFloorNum);
+
+    if ( right ){
+        totalTimeQueueRight = totalTimeQueueRight + (Math.abs(btnFloorNum - destRight) * timePerFloor * 1000);   // global timer !
+    
+        if (queueRight.length > 0 && queueRight[0] !== btnFloorNum){
+            totalTimeQueueRight = totalTimeQueueRight + delayAfterArrival; // delay between floors.
+        }
+
+        if (rightInterval == null){
+
+            rightInterval = setInterval( function checkTimerRight() {
+                if (queueRight.length !== 0 && totalTimeQueueRight > 100){
+                    totalTimeQueueRight = totalTimeQueueRight - 100;
+                }
+                    
+                else{
+                    clearInterval(rightInterval);
+                    rightInterval = null;
+                }
+            
+            }, 100);
+        }
+
+    }
+
+    else {
+        totalTimeQueueLeft = totalTimeQueueLeft + (Math.abs(btnFloorNum - destLeft) * timePerFloor * 1000); 
+
+        if (queueLeft.length > 0 && queueLeft[0] !== btnFloorNum)
+            totalTimeQueueLeft = totalTimeQueueLeft + delayAfterArrival; // delay between floors.
+        
+        if (leftInterval == null){
+
+            leftInterval = setInterval( function checkTimerRight() {
+
+                if (queueLeft.length !== 0 && totalTimeQueueLeft > 100)
+                    totalTimeQueueLeft = totalTimeQueueLeft - 100;
+                
+                else{
+                    clearInterval(leftInterval);
+                    leftInterval = null;
+                }
+            
+            }, 100);
+        }
+    }
+
+    let whichQueue = right ? totalTimeQueueRight : totalTimeQueueLeft;
+    setSpecificFloorTimer(btnFloorNum, whichQueue);
 }
 
+function setSpecificFloorTimer(floorNum, whichQueue){   // set timer on or off, depends on 'boolean'.
 
+    let currTimer = "timerFloor" + floorNum;
 
+    switch (currTimer) {
+        case "timerFloor0": {
+            timerFloor0 = true;
+            let currTime0 = whichQueue / 1000 ;
 
+            intervalTimerFloor0 = setInterval( function checkTimer0() {
+                if (currTime0 > 0){
+                    currTime0 = currTime0 - 0.1;
+                    currTime0 = currTime0.toFixed(1);
+                    document.getElementById('timerFloor0').innerText = currTime0;
+                }
 
-// const btnLeft0 = document.getElementById("btnFloor0");
-// btnLeft0.addEventListener("click", function() {
+                else{
+                    clearInterval(intervalTimerFloor0);
+                }
+            
+            }, 100);
+            return;
+        }
 
-//     var whichElevator = (getCloserElevator(0) == "left") ? "elevatorLeft" : "elevatorRight";
-//     console.log(whichElevator);
+        case "timerFloor1":{
+            timerFloor1 = true;
+            let currTime1 = whichQueue / 1000 ;
 
-//     var checkIfIdle = whichElevator + "Idle";
-//     console.log(checkIfIdle);
+            intervalTimerFloor1 = setInterval( function checkTimer1() {
+                if (currTime1 > 0.09){
+                    currTime1 = currTime1 - 0.1;
+                    currTime1 = currTime1.toFixed(1);
+                    document.getElementById('timerFloor1').innerText = currTime1;
+                }
 
-//   // if (!checkIfIdle){
-//         document.getElementById(whichElevator).style.top = "140%";
-//         document.getElementById("redBTNFloor0").style.visibility="visible";
+                else{
+                    clearInterval(intervalTimerFloor1);
+                }
+            
+            }, 100);
+            return;
+        }
 
-//         var time = computeSpeed(whichElevator, 0);
-//         document.getElementById(whichElevator).style.transition = time + "s ease-in-out";
+        case "timerFloor2": {
+            timerFloor2 = true;
+            let currTime2 = whichQueue / 1000 ;
 
-//         console.log(document.getElementById(whichElevator).style.transition);
+            intervalTimerFloor2 = setInterval( function checkTimer2() {
+                if (currTime2 > 0.09){
+                    currTime2 = currTime2 - 0.1;
+                    currTime2 = currTime2.toFixed(1);
+                    document.getElementById('timerFloor2').innerText = currTime2;
+                }
 
-//         setTimeout(function(){ 
-//             elevatorArrived(whichElevator, 0);
-//         }, time * 1000);
-// //    }
-// //     else{
-// //         //   while (checkIfIdle){
-// //         //     console.log("still idleee !!");
-// //         // }
+                else{
+                    clearInterval(intervalTimerFloor2);
+                }
+            
+            }, 100);
 
-// //         // var myVar = setInterval(myTimer(checkIfIdle), 250);
+            return;
+        }
 
-// //         console.log("else idle !!");
-// //     }
-// });
+        case "timerFloor3": {
+            timerFloor3 = true;
+            let currTime3 = whichQueue / 1000 ;
 
+            intervalTimerFloor3 = setInterval( function checkTimer3() {
+                if (currTime3 > 0.09){
+                    currTime3 = currTime3 - 0.1;
+                    currTime3 = currTime3.toFixed(1);
+                    document.getElementById('timerFloor3').innerText = currTime3;
+                }
 
+                else{
+                    clearInterval(intervalTimerFloor3);
+                }
+            
+            }, 100);
+            return;
+        }
 
-// const btnLeft1 = document.getElementById("btnFloor1");
-// btnLeft1.addEventListener("click", function() {
+        case "timerFloor4":{
+            timerFloor4 = true;
+            let currTime4 = whichQueue / 1000 ;
 
-//     var whichElevator = (getCloserElevator(1) == "left") ? "elevatorLeft" : "elevatorRight";
-//     console.log(whichElevator);
+            intervalTimerFloor4 = setInterval( function checkTimer4() {
+                if (currTime4 > 0.09){
+                    currTime4 = currTime4 - 0.1;
+                    currTime4 = currTime4.toFixed(1);
+                    document.getElementById('timerFloor4').innerText = currTime4;
+                }
 
-//     document.getElementById(whichElevator).style.top = "122%";
-//     document.getElementById("redBTNFloor1").style.visibility="visible";
-//    // setIdle(whichElevator, true);
+                else{
+                    clearInterval(intervalTimerFloor4);
+                }
+            
+            }, 100);
+            return;
+        }
+    
+        case "timerFloor5":{
+            timerFloor5 = true;
+            let currTime5 = whichQueue / 1000 ;
 
-//    var time = computeSpeed(whichElevator, 1);
-//    document.getElementById(whichElevator).style.transition = time + "s ease-in-out";
+            intervalTimerFloor5 = setInterval( function checkTimer5() {
+                if (currTime5 > 0.09){
+                    currTime5 = currTime5 - 0.1;
+                    currTime5 = currTime5.toFixed(1);
+                    document.getElementById('timerFloor5').innerText = currTime5;
+                }
 
-//     setTimeout(function(){ 
-//         elevatorArrived(whichElevator, 1);
-//      }, time * 1000);
-// });
+                else{
+                    clearInterval(intervalTimerFloor5);
+                }
+            
+            }, 100);            
+            return;
+        }
 
-// const btnLeft2 = document.getElementById("btnFloor2");
-// btnLeft2.addEventListener("click", function() {
+        case "timerFloor6":{
+            timerFloor6 = true;
+            let currTime6 = whichQueue / 1000 ;
 
-//     var whichElevator = (getCloserElevator(2) == "left") ? "elevatorLeft" : "elevatorRight";
-//     console.log(whichElevator);
+            intervalTimerFloor6 = setInterval( function checkTimer6() {
+                if (currTime6 > 0.09){
+                    currTime6 = currTime6 - 0.1;
+                    currTime6 = currTime6.toFixed(1);
+                    document.getElementById('timerFloor6').innerText = currTime6;
+                }
 
-//     document.getElementById(whichElevator).style.top = "102%";
-//     document.getElementById("redBTNFloor2").style.visibility="visible";
+                else{
+                    clearInterval(intervalTimerFloor6);
+                }
+            
+            }, 100);
+            return;
+        }
+    
+        default:
+            console.log("Invalid timer!");
+    }
+}
 
-//     var time = computeSpeed(whichElevator, 2);
-//     document.getElementById(whichElevator).style.transition = time + "s ease-in-out";
+function setTimer(btnFloorNum){
 
-//     setTimeout(function(){ 
-//         elevatorArrived(whichElevator, 2);
-//      }, time * 1000);
-// });
+    const timerFloor = "timerFloor" + btnFloorNum;
 
-// const btnLeft3 = document.getElementById("btnFloor3");
-// btnLeft3.addEventListener("click", function() {
+    if (document.getElementById(timerFloor).style.display === "block")
+        document.getElementById(timerFloor).style.display = "none";
 
-//     var whichElevator = (getCloserElevator(3) == "left") ? "elevatorLeft" : "elevatorRight";
-//     console.log(whichElevator);
+    else
+        document.getElementById(timerFloor).style.display = "block";
 
-//     document.getElementById(whichElevator).style.top = "82%";
-//     document.getElementById("redBTNFloor3").style.visibility="visible";
-
-//     var time = computeSpeed(whichElevator, 3);
-//     document.getElementById(whichElevator).style.transition = time + "s ease-in-out";
-
-//     setTimeout(function(){ 
-//         elevatorArrived(whichElevator, 3);
-//      }, time * 1000);
-// });
-
-// const btnLeft4 = document.getElementById("btnFloor4");
-// btnLeft4.addEventListener("click", function() {
-
-//     var whichElevator = (getCloserElevator(4) == "left") ? "elevatorLeft" : "elevatorRight";
-//     console.log(whichElevator);
-
-//     document.getElementById(whichElevator).style.top = "62%";
-//     document.getElementById("redBTNFloor4").style.visibility="visible";
-
-//     var time = computeSpeed(whichElevator, 4);
-//     document.getElementById(whichElevator).style.transition = time + "s ease-in-out";
-
-//     setTimeout(function(){ 
-//         elevatorArrived(whichElevator, 4);
-//      }, time * 1000);
-// });
-
-// const btnLeft5 = document.getElementById("btnFloor5");
-// btnLeft5.addEventListener("click", function() {
-
-//     var whichElevator = (getCloserElevator(5) == "left") ? "elevatorLeft" : "elevatorRight";
-//     console.log(whichElevator);
-
-//     document.getElementById(whichElevator).style.top = "42%";
-//     document.getElementById("redBTNFloor5").style.visibility="visible";
-
-//     var time = computeSpeed(whichElevator, 5);
-//     document.getElementById(whichElevator).style.transition = time + "s ease-in-out";
-
-//     setTimeout(function(){ 
-//         elevatorArrived(whichElevator, 5);
-//      }, time * 1000);
-// });
-
-// const btnLeft6 = document.getElementById("btnFloor6");
-// btnLeft6.addEventListener("click", function() {
-
-//     var whichElevator = (getCloserElevator(6) == "left") ? "elevatorLeft" : "elevatorRight";
-//     console.log(whichElevator);
-
-//     document.getElementById(whichElevator).style.top = "21%";
-//     document.getElementById("redBTNFloor6").style.visibility="visible";
-
-//     var time = computeSpeed(whichElevator, 6);
-//     document.getElementById(whichElevator).style.transition = time + "s ease-in-out";
-
-//     setTimeout(function(){ 
-//         elevatorArrived(whichElevator, 6);
-//      }, time * 1000);
-// });
-
-
+}
