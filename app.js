@@ -20,7 +20,7 @@ var elevatorWidth = 112;
 var apartmentWidth = 399;
 var floorHeight = 145;
 
-let highestFloorTopBTN = 40; // always the same number
+let highestFloorTopBTN = 35; // always the same number
 let highestFloorTopTimer = 45; // always the same number
 
 //---------------- constants decaleration ---------------//
@@ -96,6 +96,7 @@ function drawBuilding()
     if ( numElevators == 1 ){
         var elevator = new Image(elevatorWidth, floorHeight);
         elevator.src = "./assets/single_elevator_middle.png";
+        elevator.setAttribute("class", "floor");
 
         var src = document.getElementById("elementid");
         src.appendChild(elevator);
@@ -104,11 +105,14 @@ function drawBuilding()
     else if ( numElevators == 2 ){
         var elevatorLeft = new Image(elevatorWidth, floorHeight);
         elevatorLeft.src = "./assets/single_elevator_left.png";
+        elevatorLeft.setAttribute("class", "floor");
+
         var src = document.getElementById("elementid");
         src.appendChild(elevatorLeft);
 
         var elevatorRight = new Image(elevatorWidth, floorHeight);
         elevatorRight.src = "./assets/single_elevator_right.png";
+        elevatorRight.setAttribute("class", "floor");
 
         var src = document.getElementById("elementid");
         src.appendChild(elevatorRight);
@@ -123,6 +127,7 @@ function drawBuilding()
         for (elevatorNum = 0; elevatorNum < numElevators - 2; elevatorNum++){
             var elevator = new Image(elevatorWidth, floorHeight);
             elevator.src = "./assets/single_elevator_middle.png";
+            elevator.setAttribute("class", "floor");
 
             var src = document.getElementById("elementid");
             src.appendChild(elevator);
@@ -130,6 +135,7 @@ function drawBuilding()
 
         var elevatorRight = new Image(elevatorWidth, floorHeight);
         elevatorRight.src = "./assets/single_elevator_right.png";
+        elevatorRight.setAttribute("class", "floor");
 
         var src = document.getElementById("elementid");
         src.appendChild(elevatorRight);
@@ -155,6 +161,8 @@ function drawElevatorsImg( amount ) {
 function drawFloorImg(side , floorNum) {
 
     var floor = new Image(apartmentWidth, floorHeight);
+    floor.setAttribute("class", "floor");
+
 
     if ( floorNum > 15 ){
         floorNum = floorNum - 10;
@@ -193,8 +201,7 @@ function moveElevator(elevator, fromFloorNum, toFloorNum){
 // returns the top % of the current floor, for the css position
 function convertFloorToPlace(floorNum){  
 
-    // return ( 182 - 25.8 * floorNum ) + "%";
-    return (( 27.1 + (( numOfFloors - 1 - floorNum) * 25.7)) + "%" );
+    return (( 18.3 + (( numOfFloors - 1 - floorNum) * 25.2)) + "%" );
 }
 
 // removes first element from queue and plays bell ring
@@ -358,7 +365,7 @@ function createButtons(floor){
 
     let containter = document.getElementById("buttons"); // to add elements to
 
-    let computeTopBTN = highestFloorTopBTN + (25.7 * ( numOfFloors - 1 - floor )) ; // computes specific top value, to locate element
+    let computeTopBTN = highestFloorTopBTN + (24.9 * ( numOfFloors - 1 - floor )) ; // computes specific top value, to locate element
     console.log(computeTopBTN);
     let topBTN = computeTopBTN + "%" ;
 
