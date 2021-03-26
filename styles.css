@@ -1,9 +1,21 @@
 * {
-    margin: 0;
+    /* margin: 0; */
     padding: 0;
     font-family: 'Tahoma', sans-serif;
     scroll-behavior: smooth;
   }
+/* 
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit; 
+  scroll-behavior: smooth;
+  font-family: 'Tahoma', sans-serif;
+} */
+
+
 
 .header {
   background-color: rgba(44, 231, 144, 0.952);
@@ -18,32 +30,63 @@
   border-radius: 0.3em;
 }
 
-img.building {
+#config {
+  text-align: center;
+  border-radius: 1rem;
+  border: 2px solid rgba(44, 231, 144, 0.952);
+  width: 40%;
+  margin: auto;
+ margin-top: 50px;
+}
+
+p {
+  color: red;
+  font-weight: bold;
+  width: 80%;
+  margin: auto;
+  padding-bottom: 15px;
+  padding-top: 15px;
+}
+
+input[type=submit] {
+  padding: 5px 15px; 
+  background:rgba(204, 204, 204, 0.89); 
+  border:0 none;
+  cursor:pointer;
+  -webkit-border-radius: 5px;
+  border-radius: 5px; 
+  font-size: large;
+}
+
+/* img.building {
   border-radius: 0.3em;
     width: 70%;
     height: 130%;
     position: relative;
     left: 17%;
-  }
+  } */
 
   img.elevator {
     position: absolute;
-    width: 5.35%;
-    height: 20%;
-    transition: 4000ms ease-in-out;
+    width: 6.7%;
+    height: 25%;
+    /* transition: 4000ms ease-in-out; */
     z-index: 2;
+    top: 196%;
+    display: none;
   }
 
   img.btnImg {
     position: absolute;
-    left: 51.1%; 
+    left: 40%; 
     width: 2%;
     height: 4%;
+    /* display: none; */
   }
 
   img.btnImgRED {
     position: absolute;
-    left: 51.1%; 
+    left: 40%; 
     width: 2%;
     height: 4%;
     visibility : hidden;
@@ -53,7 +96,7 @@ img.building {
 .text-block {
   position: absolute;
   font-size: 11px;
-  left: 51.3%;
+  left: 40.1%;
   background-color: rgba(0, 0, 0, 0.363);
   color: white;
   padding-left: 3px;
@@ -62,3 +105,37 @@ img.building {
   display: none;
 }
 
+.floor {
+  margin: 0px;
+  padding: 0px;
+  width: 505px;
+  height: 180px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  border-collapse: collapse;
+}
+
+.elevator {
+  width: 110px;
+  height: 180px;
+  margin: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  border-collapse: collapse;
+}
+
+/* .column {
+  margin: 0%;
+  padding: 0%;
+} */
+
+/*.center {
+   position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 5px solid #FFFF00;
+  padding: 10px; 
+  position: relative;
+}
+*/

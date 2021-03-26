@@ -14,34 +14,68 @@
             <div class="header">
                 <h1>Arbox Elevators Plan : </h1>   
             </div>
+           
+          
 
-            <img class="building" src="./assets/building.jpeg" width="1400" height="1200" >
-            <img id="elevator0" class="elevator" style="left: 45.78%;" src="./assets/elevator.png" >
-            <img id="elevator1" class="elevator" style="left: 53.06%; width: 5.18%;" src="./assets/elevator.png" >
+            <div id="config">
+                <form onsubmit="event.preventDefault(); checkValues();">
+                    <br/>
+                    <h2>Please enter your building elements :</h2>
+                    <br/>
+                    <pp>Number of floors :</pp>
+                    <input type="text" id="numOfFloors" size="4">
+                    <br/>
+                    <br/>
+                    <pp>Number of elevators :</pp>
+                    <input type="text" id="numElevators" size="4">
+                    <br/>
+                    <br/>
+                    <p id="alert"></p>
+                    <br/>
+                    <input type="submit">
+                    <br/><br/><br/>
+                </form>
+            </div>
+            
 
-            <img id="btnFloor0" class="btnImg" src="./assets/greenBTN.png" style="top: 149%;" >
-            <img id="btnFloor1" class="btnImg" src="./assets/greenBTN.png" style="top: 128%;">
-            <img id="btnFloor2" class="btnImg" src="./assets/greenBTN.png" style="top: 108%;">
-            <img id="btnFloor3" class="btnImg" src="./assets/greenBTN.png" style="top: 89%;" >
-            <img id="btnFloor4" class="btnImg" src="./assets/greenBTN.png" style="top: 69%;">
-            <img id="btnFloor5" class="btnImg" src="./assets/greenBTN.png" style="top: 48%;">
-            <img id="btnFloor6" class="btnImg" src="./assets/greenBTN.png" style="top: 26%;">
+            <!-- <div classs="center"> -->
+                <div id="elementid">        
+                </div>
+            <!-- </div> -->
 
-            <img id="redBTNFloor0" class="btnImgRED" src="./assets/redBTN2.png" style="top: 149%;" >
-            <img id="redBTNFloor1" class="btnImgRED" src="./assets/redBTN2.png" style="top: 128%;">
-            <img id="redBTNFloor2" class="btnImgRED" src="./assets/redBTN2.png" style="top: 108%;">
-            <img id="redBTNFloor3" class="btnImgRED" src="./assets/redBTN2.png" style="top: 89%;" >
-            <img id="redBTNFloor4" class="btnImgRED" src="./assets/redBTN2.png" style="top: 69%;">
-            <img id="redBTNFloor5" class="btnImgRED" src="./assets/redBTN2.png" style="top: 48%;">
-            <img id="redBTNFloor6" class="btnImgRED" src="./assets/redBTN2.png" style="top: 26%;">
 
-            <div id="timerFloor0" class="text-block" style="top: 153.5%;"></div>
-            <div id="timerFloor1" class="text-block" style="top: 132%;"></div>
-            <div id="timerFloor2" class="text-block" style="top: 112%;"></div>
-            <div id="timerFloor3" class="text-block" style="top: 93%;"></div>
-            <div id="timerFloor4" class="text-block" style="top: 73%;"></div>
-            <div id="timerFloor5" class="text-block" style="top: 52%;"></div>
-            <div id="timerFloor6" class="text-block" style="top: 30%;"></div>
+            <img id="elevator0" class="elevator" style="left: 33.18%;" src="./assets/elevator.png" >
+            <img id="elevator1" class="elevator" style="left: 42.22%;" src="./assets/elevator.png" >
+            <img id="elevator2" class="elevator" style="left: 51.08%;" src="./assets/elevator.png" >
+            <img id="elevator3" class="elevator" style="left: 59.9%;" src="./assets/elevator.png" >
+
+            <div id="buttons">
+            </div>
+
+            <!-- <img id="btnFloor0" class="btnImg" src="./assets/greenBTN.png" style="top: 190%;" >
+            <img id="btnFloor1" class="btnImg" src="./assets/greenBTN.png" style="top: 165%;">
+            <img id="btnFloor2" class="btnImg" src="./assets/greenBTN.png" style="top: 140%;">
+            <img id="btnFloor3" class="btnImg" src="./assets/greenBTN.png" style="top: 115%;" >
+            <img id="btnFloor4" class="btnImg" src="./assets/greenBTN.png" style="top: 90%;">
+            <img id="btnFloor5" class="btnImg" src="./assets/greenBTN.png" style="top: 65%;">
+            <img id="btnFloor6" class="btnImg" src="./assets/greenBTN.png" style="top: 40%;"> -->
+
+<!-- 
+            <img id="redBTNFloor0" class="btnImgRED" src="./assets/redBTN2.png" style="top: 190%;" >
+            <img id="redBTNFloor1" class="btnImgRED" src="./assets/redBTN2.png" style="top: 165%;">
+            <img id="redBTNFloor2" class="btnImgRED" src="./assets/redBTN2.png" style="top: 140%;">
+            <img id="redBTNFloor3" class="btnImgRED" src="./assets/redBTN2.png" style="top: 115%;" >
+            <img id="redBTNFloor4" class="btnImgRED" src="./assets/redBTN2.png" style="top: 90%;">
+            <img id="redBTNFloor5" class="btnImgRED" src="./assets/redBTN2.png" style="top: 65%;">
+            <img id="redBTNFloor6" class="btnImgRED" src="./assets/redBTN2.png" style="top: 40%;"> -->
+
+            <!-- <div id="timerFloor0" class="text-block" style="top: 195%;"></div>
+            <div id="timerFloor1" class="text-block" style="top: 170%;"></div>
+            <div id="timerFloor2" class="text-block" style="top: 145%;"></div>
+            <div id="timerFloor3" class="text-block" style="top: 120%;"></div>
+            <div id="timerFloor4" class="text-block" style="top: 95%;"></div>
+            <div id="timerFloor5" class="text-block" style="top: 70%;"></div>
+            <div id="timerFloor6" class="text-block" style="top: 45%;"></div> -->
 
             </div>
         </div>

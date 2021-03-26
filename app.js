@@ -9,13 +9,19 @@ let delayAfterArrival = 2000;  // in miliseconds
 let firstInitial = true;
 
 let arrayOfFloors = [];
-let numOfFloors = 7; // default.
+let numOfFloors; // gets input from user
 
 let arrayOfElevators = [];
-let numElevators = 2;
+let numElevators;  // gets input from user
 
 let time_elapsed;
 
+var elevatorWidth = 112;
+var apartmentWidth = 399;
+var floorHeight = 145;
+
+let highestFloorTopBTN = 40; // always the same number
+let highestFloorTopTimer = 45; // always the same number
 
 //---------------- constants decaleration ---------------//
 
@@ -24,12 +30,12 @@ let ONE_SECOND = 1000;
 
 
 
-initialState();
-
 function initialState(){
 
     if (firstInitial){
+        hideForm();
         setAllButtons();
+        drawBuilding();
     }
 
     for (elevator = 0; elevator < numElevators; elevator++ ){
@@ -46,7 +52,7 @@ function initialState(){
 
 // initializes arrays of floors and elevators
 function setAllButtons() {
-     
+
     // initialize all floors dictionaries
     for (floor = 0; floor < numOfFloors; floor++ ){
 
@@ -58,8 +64,7 @@ function setAllButtons() {
             redButton: "redBTNFloor" + floor,
         }; 
 
-        let elementBTN = document.getElementById(arrayOfFloors[floor].button);
-        elementBTN.addEventListener("click", onBTNpress.bind(this, floor), false);
+        createButtons(floor);
     }
 
     // initialize all elevators
@@ -71,12 +76,86 @@ function setAllButtons() {
             totalQueueTime: 0,
             globalInterval: null,
             currentFloor: Math.floor(Math.random() * Math.floor(numOfFloors)),   // random initial place of elevator
+            // currentFloor: 6
         };
         let currElevator = arrayOfElevators[elevator];
         document.getElementById(currElevator.id).style.top = convertFloorToPlace(currElevator.currentFloor);
     }
 
     firstInitial = false;
+}
+
+function drawBuilding()
+{
+
+  for (floorNum = 0; floorNum < numOfFloors; floorNum++)
+  {
+    var floorLeft = new Image(apartmentWidth, floorHeight);
+    floorLeft.src = "./assets/floor_left.png";
+
+    var src = document.getElementById("elementid");
+    src.appendChild(floorLeft);
+
+    if ( numElevators == 1 ){
+        var elevator = new Image(elevatorWidth, floorHeight);
+        elevator.src = "./assets/single_elevator_middle.png";
+
+        var src = document.getElementById("elementid");
+        src.appendChild(elevator);
+    }
+
+    else if ( numElevators == 2 ){
+        var elevatorLeft = new Image(elevatorWidth, floorHeight);
+        elevatorLeft.src = "./assets/single_elevator_left.png";
+        var src = document.getElementById("elementid");
+        src.appendChild(elevatorLeft);
+
+        var elevatorRight = new Image(elevatorWidth, floorHeight);
+        elevatorRight.src = "./assets/single_elevator_right.png";
+
+        var src = document.getElementById("elementid");
+        src.appendChild(elevatorRight);
+    }
+
+    else {
+        var elevatorLeft = new Image(elevatorWidth, floorHeight);
+        elevatorLeft.src = "./assets/single_elevator_left.png";
+        var src = document.getElementById("elementid");
+        src.appendChild(elevatorLeft);
+        
+        for (elevatorNum = 0; elevatorNum < numElevators - 2; elevatorNum++){
+            var elevator = new Image(elevatorWidth, floorHeight);
+            elevator.src = "./assets/single_elevator_middle.png";
+
+            var src = document.getElementById("elementid");
+            src.appendChild(elevator);
+        }
+
+        var elevatorRight = new Image(elevatorWidth, floorHeight);
+        elevatorRight.src = "./assets/single_elevator_right.png";
+
+        var src = document.getElementById("elementid");
+        src.appendChild(elevatorRight);
+    }
+
+    var floorRight = new Image(apartmentWidth, floorHeight);
+    floorRight.src = "./assets/floor_right.png";
+
+    var src = document.getElementById("elementid");
+    src.appendChild(floorRight);
+
+    drawElevatorsImg(numElevators);
+  }
+}
+
+// this function adds the elevators images according to the num of elevators' input
+function drawElevatorsImg( amount ) {
+
+    for ( elevatorNum = 0 ; elevatorNum < amount ; elevatorNum ++){
+
+        var elevator_img = "elevator" + elevatorNum ;
+        document.getElementById(elevator_img).style.display = "block";
+    }
 }
 
 
@@ -102,7 +181,8 @@ function moveElevator(elevator, fromFloorNum, toFloorNum){
 // returns the top % of the current floor, for the css position
 function convertFloorToPlace(floorNum){  
 
-    return ( 140 - 20 * floorNum ) + "%";
+    // return ( 182 - 25.8 * floorNum ) + "%";
+    return (( 27.1 + (( numOfFloors - 1 - floorNum) * 25.7)) + "%" );
 }
 
 // removes first element from queue and plays bell ring
@@ -135,9 +215,9 @@ function onBTNpress(btnFloorNum){
     bestElevator.queue.push(btnFloorNum);
 
     calculateElevatorQueueTime(bestElevator, btnFloorNum);
-    setTimer(btnFloorNum);
-
     setSpecificFloorTimer(btnFloorNum, bestElevator);
+
+    setTimer(btnFloorNum);
 }
 
 // when adding a new floor to queue - adds to the totalQueueTime the current duration, and delay if needed (2s)
@@ -231,5 +311,87 @@ function setTimer(btnFloorNum){
     else{
         document.getElementById(currentTimer).style.display = "block";
     }
+}
 
+// checks the validity of the user's inputs, and alerts if needed
+function checkValues() {
+
+    numOfFloors = document.getElementById("numOfFloors").value; // gets input from user
+    numElevators = document.getElementById("numElevators").value;  // gets input from user
+
+    if ( numOfFloors <= 0 )
+        document.getElementById("alert").innerHTML = "You must have at least one floor in your building. Please try again.";  // gets input from user
+
+
+    else if ( numOfFloors > 21 )
+        document.getElementById("alert").innerHTML = "Your building is too high and it might fall. Please enter a smaller number of floors (1-21).";
+
+    else if ( numElevators < 1 )
+        document.getElementById("alert").innerHTML = "Your tenants are old, you must add at least one elevator. Please try again.";
+
+    else if ( numElevators > 4 )
+        document.getElementById("alert").innerHTML = "Sorry, this is too expansive and you can't afford this. Please enter a smaller number of elevators (1-4).";
+
+    else if ( 1 <= numOfFloors <= 21 && 1 <= numElevators <= 4 )
+        initialState();
+}
+
+function hideForm() {
+    document.getElementById("config").style.display = "none";  // gets input from user
+}
+
+
+// adds image of the green and red buttons, with attributes and eventListener, if any.
+function createButtons(floor){
+
+    let containter = document.getElementById("buttons"); // to add elements to
+
+    let computeTopBTN = highestFloorTopBTN + (25.7 * ( numOfFloors - 1 - floor )) ; // computes specific top value, to locate element
+    console.log(computeTopBTN);
+    let topBTN = computeTopBTN + "%" ;
+
+    let greenBtnId = "btnFloor" + floor;
+    let btnImage = document.createElement("img");
+
+    btnImage.setAttribute("src","./assets/greenBTN.png");
+    btnImage.setAttribute("class", "btnImg");
+    btnImage.id = greenBtnId ;
+    
+    containter.appendChild(btnImage);
+
+    let elementBTN = document.getElementById(arrayOfFloors[floor].button);
+    elementBTN.addEventListener("click", onBTNpress.bind(this, floor), false);
+
+    elementBTN.style.display = "block";
+    elementBTN.style.top = topBTN;
+
+    //////////////////////////////////
+
+    let redBtnId = "redBTNFloor" + floor;
+    let redBtnImage = document.createElement("img");
+
+    redBtnImage.setAttribute("src","./assets/redBTN2.png");
+    redBtnImage.setAttribute("class", "btnImgRED");
+    redBtnImage.id = redBtnId ;
+    
+    containter.appendChild(redBtnImage);
+
+    let elementRedBTN = document.getElementById(arrayOfFloors[floor].redButton);
+    elementRedBTN.style.top = topBTN;
+
+    //////////////////////////////////
+
+    let timerId = "timerFloor" + floor;
+    let timerElem = document.createElement("div");
+
+    timerElem.setAttribute("class", "text-block");
+    timerElem.id = timerId;
+
+    containter.appendChild(timerElem);
+
+    let computeTopTimer = computeTopBTN + 5 ; // computes specific top value, to locate element
+    let topTimer = computeTopTimer + "%" ;
+
+    let elementTimer = document.getElementById(arrayOfFloors[floor].id);
+    elementTimer.style.top = topTimer;
 }
