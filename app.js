@@ -16,8 +16,8 @@ let numElevators;  // gets input from user
 
 let time_elapsed;
 
-var elevatorWidth = 112;
-var apartmentWidth = 399;
+var elevatorWidth = 114;
+var apartmentWidth = 395;
 var floorHeight = 145;
 
 let highestFloorTopBTN = 35; // always the same number
@@ -92,54 +92,15 @@ function drawBuilding()
   {
 
     drawFloorImg("left_floor", numOfFloors - floorNum - 1);
-
-    if ( numElevators == 1 ){
+        
+    for (elevatorNum = 0; elevatorNum < numElevators; elevatorNum++){
         var elevator = new Image(elevatorWidth, floorHeight);
-        elevator.src = "./assets/single_elevator_middle.png";
+        elevator.src = "./assets/single_elevator.png";
         elevator.setAttribute("class", "floor");
 
         var src = document.getElementById("elementid");
         src.appendChild(elevator);
-    }
-
-    else if ( numElevators == 2 ){
-        var elevatorLeft = new Image(elevatorWidth, floorHeight);
-        elevatorLeft.src = "./assets/single_elevator_left.png";
-        elevatorLeft.setAttribute("class", "floor");
-
-        var src = document.getElementById("elementid");
-        src.appendChild(elevatorLeft);
-
-        var elevatorRight = new Image(elevatorWidth, floorHeight);
-        elevatorRight.src = "./assets/single_elevator_right.png";
-        elevatorRight.setAttribute("class", "floor");
-
-        var src = document.getElementById("elementid");
-        src.appendChild(elevatorRight);
-    }
-
-    else {
-        var elevatorLeft = new Image(elevatorWidth, floorHeight);
-        elevatorLeft.src = "./assets/single_elevator_left.png";
-        var src = document.getElementById("elementid");
-        src.appendChild(elevatorLeft);
-        
-        for (elevatorNum = 0; elevatorNum < numElevators - 2; elevatorNum++){
-            var elevator = new Image(elevatorWidth, floorHeight);
-            elevator.src = "./assets/single_elevator_middle.png";
-            elevator.setAttribute("class", "floor");
-
-            var src = document.getElementById("elementid");
-            src.appendChild(elevator);
-        }
-
-        var elevatorRight = new Image(elevatorWidth, floorHeight);
-        elevatorRight.src = "./assets/single_elevator_right.png";
-        elevatorRight.setAttribute("class", "floor");
-
-        var src = document.getElementById("elementid");
-        src.appendChild(elevatorRight);
-    }
+    }  
 
     drawFloorImg("right_floor", numOfFloors - floorNum - 1);
     drawElevatorsImg(numElevators);
@@ -389,7 +350,7 @@ function createButtons(floor){
     let redBtnId = "redBTNFloor" + floor;
     let redBtnImage = document.createElement("img");
 
-    redBtnImage.setAttribute("src","./assets/redBTN2.png");
+    redBtnImage.setAttribute("src","./assets/redBTN.png");
     redBtnImage.setAttribute("class", "btnImgRED");
     redBtnImage.id = redBtnId ;
     

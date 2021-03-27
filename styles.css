@@ -52,7 +52,7 @@ input[type=submit] {
 
 img.elevator {
   position: absolute;
-  width: 6.7%;
+  width: 6.3%;
   height: 25%;
   /* transition: 4000ms ease-in-out; */
   z-index: 2;
