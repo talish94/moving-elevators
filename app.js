@@ -1,12 +1,14 @@
+////////////////////////////////////////////////////////////////////
+//  
+//  Project       :   Moving-Elevator (Home Assignment) 
+//  File          :   app.js
+//  Description   :   The main logic of dynamic elevators' simulator
+//
+//  Created On    :   17/03/2021 
+//  Created By    :   Tali Schvartz
+//
 
-//---------------- variables decaleration ---------------//
-
-let audio = new Audio('./assets/ElevatorBell.mp3');
-
-let timePerFloor = 4000;  // in miliseconds
-let delayAfterArrival = 2000;  // in miliseconds
-
-let firstInitial = true;
+//////////////////// VARIABLES DECLERATION /////////////////////////
 
 let arrayOfFloors = [];
 let numOfFloors; // gets input from user
@@ -14,21 +16,35 @@ let numOfFloors; // gets input from user
 let arrayOfElevators = [];
 let numElevators;  // gets input from user
 
-let time_elapsed;
-
-var elevatorWidth = 114;
-var apartmentWidth = 395;
-var floorHeight = 145;
-
-let highestFloorTopBTN = 35; // always the same number
-let highestFloorTopTimer = 45; // always the same number
-
-//---------------- constants decaleration ---------------//
-
-let ONE_SECOND = 1000;
+let firstInitial = true;
 
 
+//////////////////// CONSTANTS AND CONFIGURAIONS ////////////////////
 
+let SECOND_IN_MILLI = 1000;
+let REFRESH_RATE = 100;
+
+let elevatorSound = new Audio('./assets/ElevatorBell.mp3');
+
+let timePerFloorInMilli = 4000;  
+let delayAfterArrivalInMilli = 2000;  
+
+let highestBTNCoordinate = 35;
+
+let elevatorWidth = 114;
+let apartmentWidth = 395;
+let floorHeight = 145;
+
+let FLOOR_IMAGES_STOCK = 10;
+let FIRST_SKY_IMAGE = 6;
+
+let HIGHEST_ELEVATOR_PERCENTAGE = 18.3;
+let FLOOR_HEIGHT_PERCENTAGE = 25.2;
+
+
+//////////////////// STATE MACHINE FUNCTIONS ////////////////////
+
+// The state machine contains three states: initialState -> moveElevator -> completeMove.
 
 function initialState(){
 
@@ -46,56 +62,66 @@ function initialState(){
 
     setTimeout(function() {
         initialState();
-    }, 100); 
+    }, REFRESH_RATE); 
+}
+
+// sets the css transition and top, from 'fromFloorNum' to 'toFloorNum'
+function moveElevator(elevator, fromFloorNum, toFloorNum){
+
+    elevator.isBusy = true;
+
+    let topRate = convertFloorToCoordinate(toFloorNum);  
+    document.getElementById(elevator.id).style.top = topRate;
+
+    // sets the duration of the movement, depends on the distance between the 2 floors
+    let movementDuration = (Math.abs(fromFloorNum - toFloorNum)) * timePerFloorInMilli; 
+    document.getElementById(elevator.id).style.transition = movementDuration + "ms ease-in-out"; 
+
+    // after the elevator gets to its destination - change to 'completeMove' state
+    setTimeout(function(){ 
+        completeMove(elevator, toFloorNum);
+     }, movementDuration);  
 }
 
 
-// initializes arrays of floors and elevators
-function setAllButtons() {
+// removes first element from queue and plays bell ring
+function completeMove(elevator, toFloorNum){
 
-    // initialize all floors dictionaries
-    for (floor = 0; floor < numOfFloors; floor++ ){
+    elevatorSound.play();
+    document.getElementById(arrayOfFloors[toFloorNum].redButton).style.visibility="hidden";
 
-        arrayOfFloors[floor] = {
-            id: "timerFloor" + floor,
-            isTimerOn: false,
-            interval: null,
-            button: "btnFloor" + floor,
-            redButton: "redBTNFloor" + floor,
-        }; 
+    switchTimerDisplay(toFloorNum);
+    elevator.isBusy = true;
 
-        createButtons(floor);
-    }
+    setTimeout(function(){ 
 
-    // initialize all elevators
-    for (elevator = 0; elevator < numElevators; elevator++ ){
-        arrayOfElevators[elevator] = {
-            id: "elevator" + elevator,
-            queue: [],
-            isBusy: false,
-            totalQueueTime: 0,
-            globalInterval: null,
-            currentFloor: Math.floor(Math.random() * Math.floor(numOfFloors)),   // random initial place of elevator
-            // currentFloor: 6
-        };
-        let currElevator = arrayOfElevators[elevator];
-        document.getElementById(currElevator.id).style.top = convertFloorToPlace(currElevator.currentFloor);
-    }
+        elevator.isBusy = false;
+        elevator.currentFloor = elevator.queue.shift();
 
-    firstInitial = false;
+        if (elevator.queue.length === 0){
+            elevator.totalQueueTime = 0;
+        }
+
+    }, delayAfterArrivalInMilli);  // waits before ready to move again
 }
 
+
+//////////////////// DISPLAY FUNCTIONS ////////////////////
+
+
+// draws floors according to 'numOfFloors', were each consists of 2 apartments and 'numElevators' elevators
 function drawBuilding()
 {
 
   for (floorNum = 0; floorNum < numOfFloors; floorNum++)
   {
 
+    // calculate the floor from bottom, to add the correct image
     drawFloorImg("left_floor", numOfFloors - floorNum - 1);
         
     for (elevatorNum = 0; elevatorNum < numElevators; elevatorNum++){
         var elevator = new Image(elevatorWidth, floorHeight);
-        elevator.src = "./assets/single_elevator.png";
+        elevator.src = "./assets/elevator_shaft.png";
         elevator.setAttribute("class", "floor");
 
         var src = document.getElementById("elementid");
@@ -124,13 +150,9 @@ function drawFloorImg(side , floorNum) {
     var floor = new Image(apartmentWidth, floorHeight);
     floor.setAttribute("class", "floor");
 
-
-    if ( floorNum > 15 ){
-        floorNum = floorNum - 10;
-    }
-
-    else if ( floorNum > 10 ) {
-        floorNum = floorNum - 5;
+    // due to UI design issues (different building background)
+    if ( floorNum > FLOOR_IMAGES_STOCK ) {
+        floorNum = ( floorNum % FIRST_SKY_IMAGE ) + FIRST_SKY_IMAGE;
     }
 
     floor.src = "./assets/" + side + "/" + floorNum + ".png";
@@ -140,147 +162,8 @@ function drawFloorImg(side , floorNum) {
 }
     
 
-
-function moveElevator(elevator, fromFloorNum, toFloorNum){
-
-    elevator.isBusy = true;
-
-    let topRate = convertFloorToPlace(toFloorNum);  
-    document.getElementById(elevator.id).style.top = topRate;
-
-    let time = (Math.abs(fromFloorNum - toFloorNum)) * timePerFloor;
-    document.getElementById(elevator.id).style.transition = time + "ms ease-in-out"; // sets duration depends on distance between the 2 floors
-
-    setTimeout(function(){ 
-        completeMove(elevator, toFloorNum);
-     }, time);  // only after the elevator gets to its destination
-
-     return time;
-}
-
-
-// returns the top % of the current floor, for the css position
-function convertFloorToPlace(floorNum){  
-
-    return (( 18.3 + (( numOfFloors - 1 - floorNum) * 25.2)) + "%" );
-}
-
-// removes first element from queue and plays bell ring
-function completeMove(elevator, toFloorNum){
-
-    audio.play();
-    document.getElementById(arrayOfFloors[toFloorNum].redButton).style.visibility="hidden";
-
-    setTimer(toFloorNum);
-    elevator.isBusy = true;
-
-    setTimeout(function(){ 
-
-        elevator.isBusy = false;
-        elevator.currentFloor = elevator.queue.shift();
-
-        if (elevator.queue.length === 0){
-            elevator.totalQueueTime = 0;
-        }
-
-    }, delayAfterArrival);  // waits 2 seconds before ready to move again
-}
-
-// when calls the elevator - changes the button color and sets the timer
-function onBTNpress(btnFloorNum){
-
-    document.getElementById(arrayOfFloors[btnFloorNum].redButton).style.visibility="visible";
-
-    let bestElevator = getBestElevator(btnFloorNum);
-    bestElevator.queue.push(btnFloorNum);
-
-    calculateElevatorQueueTime(bestElevator, btnFloorNum);
-    setSpecificFloorTimer(btnFloorNum, bestElevator);
-
-    setTimer(btnFloorNum);
-}
-
-// when adding a new floor to queue - adds to the totalQueueTime the current duration, and delay if needed (2s)
-function calculateElevatorQueueTime(elevator, btnFloorNum){
-
-    let finalDest; // initialize
-
-    if (elevator.queue.length > 1){
-        finalDest = elevator.queue[elevator.queue.length - 2]
-    }
-    else {
-        finalDest = elevator.currentFloor;
-    }
-
-    elevator.totalQueueTime += (Math.abs(btnFloorNum - finalDest) * timePerFloor );   // global timer !
-    
-    if (elevator.queue.length > 0 && elevator.queue[0] !== btnFloorNum){
-        elevator.totalQueueTime += delayAfterArrival; // delay between floors.
-    }
-
-    if (elevator.interval == null){
-
-        // sets global interval for current elevator's queue
-        elevator.interval = setInterval( function checkTimerRight() {
-            if (elevator.queue.length !== 0 && elevator.totalQueueTime > 100){
-                elevator.totalQueueTime -= 100;
-            }
-                
-            else{
-                clearInterval(elevator.interval);
-                elevator.interval = null;
-            }
-        
-        }, 100); // implements a countdown timer, every 100 ms
-    }
-}
-
-// return the closest elevator to the specific requested btnFloorNum (distance, not time)
-function getBestElevator(btnFloorNum){
-    let minDistance = numOfFloors;
-    let bestElevator = null;
-
-    for (elevator = 0; elevator < numElevators; elevator++ ){
-
-        let currElevator = arrayOfElevators[elevator];
-        let finalDest = currElevator.queue.length !== 0 ? currElevator.queue[currElevator.queue.length - 1] : currElevator.currentFloor;
-        let dist = Math.abs(btnFloorNum - finalDest);
-
-        // checks if min value needs to be updated
-        if (dist < minDistance) {
-            minDistance = dist;
-            bestElevator = currElevator;
-        }
-    }
-    return bestElevator;
-}
-
-// sets countdown timer per requested floor
-function setSpecificFloorTimer(requestedFloor, elevator){   
-
-    let currFloor = arrayOfFloors[requestedFloor];
-    let elevatorQueueTime = elevator.totalQueueTime;
-    let currTime = elevatorQueueTime / ONE_SECOND ;  // converts ms to seconds, for display 
-
-    currFloor.interval = setInterval( function checkTimer() {
-
-        if (currTime > 0){
-
-            console.log(currTime);
-            currTime = currTime - 0.1;  // subtracts 0.1 second (100 ms) every interval 
-            currTime = currTime.toFixed(1);
-            document.getElementById(currFloor.id).innerText = currTime;
-        }
-
-        else{
-            clearInterval(currFloor.interval);
-        }
-    
-    }, 100);
-}
-
 // hides or displays the current timer div
-function setTimer(btnFloorNum){
+function switchTimerDisplay(btnFloorNum){
 
     let currentTimer = arrayOfFloors[btnFloorNum].id;
 
@@ -293,18 +176,165 @@ function setTimer(btnFloorNum){
     }
 }
 
+
+
+
+//////////////////// HELP FUNCTIONS ////////////////
+
+// initializes arrays of floors and elevators
+function setAllButtons() {
+
+    // initialize all floors dictionaries
+    for (floor = 0; floor < numOfFloors; floor++ ){
+
+        arrayOfFloors[floor] = {
+            id: "timerFloor" + floor,
+            isTimerOn: false,
+            interval: null,
+            button: "btnFloor" + floor,
+            redButton: "redBTNFloor" + floor,
+        }; 
+
+        createButtons(floor);
+    }
+
+    // initialize all elevators
+    for (elevator = 0; elevator < numElevators; elevator++ ){
+        arrayOfElevators[elevator] = {
+            id: "elevator" + elevator,
+            queue: [],
+            isBusy: false,
+            totalQueueTime: 0,
+            globalInterval: null,
+            currentFloor: Math.floor(Math.random() * Math.floor(numOfFloors)),   // random initial place of elevator
+        };
+        let currElevator = arrayOfElevators[elevator];
+        document.getElementById(currElevator.id).style.top = convertFloorToCoordinate(currElevator.currentFloor);
+    }
+
+    firstInitial = false;
+}
+
+
+// returns the top % of the current floor, for the css position
+function convertFloorToCoordinate(floorNum){  
+
+    return (( HIGHEST_ELEVATOR_PERCENTAGE + (( numOfFloors - 1 - floorNum) * FLOOR_HEIGHT_PERCENTAGE)) + "%" );
+}
+
+
+
+// when calls the elevator - changes the button color and sets the timer
+function onBTNpress(btnFloorNum){
+
+    document.getElementById(arrayOfFloors[btnFloorNum].redButton).style.visibility="visible";
+
+    let bestElevator = getNearestElevator(btnFloorNum);
+    bestElevator.queue.push(btnFloorNum);
+
+    calculateElevatorQueueTime(bestElevator, btnFloorNum);
+    setSpecificFloorTimer(btnFloorNum, bestElevator);
+
+    switchTimerDisplay(btnFloorNum);
+}
+
+
+// when adding a new floor to queue - adds to the totalQueueTime the current duration, and delay if needed
+function calculateElevatorQueueTime(elevator, btnFloorNum){
+
+    let finalDest; // initialize
+
+    // gets the last detination of the elevator from its queue, with considering that the last element is 'btnFloorNum' 
+    if (elevator.queue.length > 1) {
+        finalDest = elevator.queue[elevator.queue.length - 2] 
+    }
+    else {
+        finalDest = elevator.currentFloor;
+    }
+
+    elevator.totalQueueTime += (Math.abs(btnFloorNum - finalDest) * timePerFloorInMilli );   // global timer !
+    
+    if (elevator.queue.length > 0 && elevator.queue[0] !== btnFloorNum){
+        elevator.totalQueueTime += delayAfterArrivalInMilli; // delay between floors.
+    }
+
+    if (elevator.interval == null){
+
+        // sets global interval for current elevator's queue
+        elevator.interval = setInterval( function checkTimerRight() {
+            if (elevator.queue.length !== 0 && elevator.totalQueueTime > REFRESH_RATE){
+                elevator.totalQueueTime -= REFRESH_RATE;
+            }
+                
+            else{
+                clearInterval(elevator.interval);
+                elevator.interval = null;
+            }
+        
+        }, REFRESH_RATE); // implements a countdown timer
+    }
+}
+
+
+// returns the nearest elevator to the specific requested btnFloorNum (distance, not time)
+function getNearestElevator(btnFloorNum){
+    
+    let minDistance = numOfFloors;
+    let bestElevator = null;
+
+    for (elevator = 0; elevator < numElevators; elevator++ ){
+
+        let currElevator = arrayOfElevators[elevator];
+        let finalDest = currElevator.queue.length !== 0 ? currElevator.queue[currElevator.queue.length - 1] : currElevator.currentFloor;
+        let dist = Math.abs(btnFloorNum - finalDest);
+
+        // checks if min value needs to be updated
+        if (dist < minDistance) {
+
+            minDistance = dist;
+            bestElevator = currElevator;
+        }
+    }
+    return bestElevator;
+}
+
+
+// sets countdown timer per requested floor
+function setSpecificFloorTimer(requestedFloor, elevator){   
+
+    let currFloor = arrayOfFloors[requestedFloor];
+    let elevatorQueueTime = elevator.totalQueueTime;
+    let currTime = elevatorQueueTime / SECOND_IN_MILLI ; 
+
+    currFloor.interval = setInterval( function checkTimer() {
+
+        if (currTime > 0){
+
+            console.log(currTime);
+            currTime = currTime - ( REFRESH_RATE / SECOND_IN_MILLI );  // updates the timer every interval ( REFRESH_RATE ) 
+            currTime = currTime.toFixed(1);
+            document.getElementById(currFloor.id).innerText = currTime;
+        }
+
+        else{
+            clearInterval(currFloor.interval);
+        }
+    
+    }, REFRESH_RATE);
+}
+
+
 // checks the validity of the user's inputs, and alerts if needed
 function checkValues() {
 
     numOfFloors = document.getElementById("numOfFloors").value; // gets input from user
     numElevators = document.getElementById("numElevators").value;  // gets input from user
 
-    if ( numOfFloors <= 0 )
-        document.getElementById("alert").innerHTML = "You must have at least one floor in your building. Please try again.";  // gets input from user
+    if ( numOfFloors <= 1 )
+        document.getElementById("alert").innerHTML = "You must have at least two floors in your building. Please try again.";  // gets input from user
 
-
-    else if ( numOfFloors > 21 )
-        document.getElementById("alert").innerHTML = "Your building is too high and it might fall. Please enter a smaller number of floors (1-21).";
+    else if ( numOfFloors > 40 )
+        document.getElementById("alert").innerHTML = "Your building is too high and it might fall. Please enter a smaller number of floors (1-40).";
 
     else if ( numElevators < 1 )
         document.getElementById("alert").innerHTML = "Your tenants are old, you must add at least one elevator. Please try again.";
@@ -312,10 +342,12 @@ function checkValues() {
     else if ( numElevators > 4 )
         document.getElementById("alert").innerHTML = "Sorry, this is too expansive and you can't afford this. Please enter a smaller number of elevators (1-4).";
 
-    else if ( 1 <= numOfFloors <= 21 && 1 <= numElevators <= 4 )
+    else if ( 1 <= numOfFloors <= 40 && 1 <= numElevators <= 4 )
         initialState();
 }
 
+
+// hides the configuration form before displaying the building
 function hideForm() {
     document.getElementById("config").style.display = "none";  // gets input from user
 }
@@ -326,7 +358,7 @@ function createButtons(floor){
 
     let containter = document.getElementById("buttons"); // to add elements to
 
-    let computeTopBTN = highestFloorTopBTN + (24.9 * ( numOfFloors - 1 - floor )) ; // computes specific top value, to locate element
+    let computeTopBTN = highestBTNCoordinate + (24.9 * ( numOfFloors - 1 - floor )) ; // computes specific top value, to locate element
     console.log(computeTopBTN);
     let topBTN = computeTopBTN + "%" ;
 
@@ -375,3 +407,5 @@ function createButtons(floor){
     let elementTimer = document.getElementById(arrayOfFloors[floor].id);
     elementTimer.style.top = topTimer;
 }
+
+
