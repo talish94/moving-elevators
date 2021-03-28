@@ -128,11 +128,11 @@ function drawBuilding()
     drawFloorImg("left_floor", numOfFloors - floorNum - 1);
         
     for (elevatorNum = 0; elevatorNum < numElevators; elevatorNum++){
-        var elevator = new Image(elevatorWidth, floorHeight);
+        let elevator = new Image(elevatorWidth, floorHeight);
         elevator.src = "./assets/elevator_shaft.png";
         elevator.setAttribute("class", "floor");
 
-        var src = document.getElementById("elementid");
+        let src = document.getElementById("elementid");
         src.appendChild(elevator);
     }  
 
@@ -147,7 +147,7 @@ function drawElevatorsImg( amount ) {
 
     for ( elevatorNum = 0 ; elevatorNum < amount ; elevatorNum ++){
 
-        var elevator_img = "elevator" + elevatorNum ;
+        let elevator_img = "elevator" + elevatorNum ;
         document.getElementById(elevator_img).style.display = "block";
     }
 }
@@ -155,7 +155,7 @@ function drawElevatorsImg( amount ) {
 // draws the right and left apartments of the specific floor (floorNum)
 function drawFloorImg(side , floorNum) {
 
-    var floor = new Image(apartmentWidth, floorHeight);
+    let floor = new Image(apartmentWidth, floorHeight);
     floor.setAttribute("class", "floor");
 
     // due to UI design issues (different building background)
@@ -165,7 +165,7 @@ function drawFloorImg(side , floorNum) {
 
     floor.src = "./assets/" + side + "/" + floorNum + ".png";
 
-    var src = document.getElementById("elementid");
+    let src = document.getElementById("elementid");
     src.appendChild(floor);
 }
     
