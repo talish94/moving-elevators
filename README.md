@@ -13,4 +13,5 @@ When the elevator arrives to the floor:
 * The button turns green again,
 * The elevator waits for 2 seconds untill it can handle next call, if there is one.
 
-## Hope you'll enjoy it :)
+
+### Hope you'll enjoy it :)
