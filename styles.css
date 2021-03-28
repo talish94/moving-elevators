@@ -31,7 +31,6 @@
 
 p {
   color: red;
-  font-weight: bold;
   width: 80%;
   margin: auto;
   padding-bottom: 15px;
@@ -46,7 +45,6 @@ input[type=submit] {
   -webkit-border-radius: 5px;
   border-radius: 5px; 
   font-size: large;
-  /* font-weight: bold; */
 }
 
 
@@ -54,7 +52,6 @@ img.elevator {
   position: absolute;
   width: 6.3%;
   height: 25%;
-  /* transition: 4000ms ease-in-out; */
   z-index: 2;
   top: 196%;
   display: none;
@@ -65,7 +62,6 @@ img.btnImg {
   left: 40%; 
   width: 2%;
   height: 4%;
-  /* display: none; */
 }
 
 img.btnImgRED {
@@ -101,4 +97,3 @@ img.btnImgRED {
   margin-bottom: 0px;
   border-collapse: collapse;
 }
-
